@@ -1,27 +1,29 @@
 import express from "express";
 import dotenv from "dotenv";
-import { connectDB } from "./lib/db.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";  // Importing for ES module compatibility
 
+import { connectDB } from "./lib/db.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import { app, server } from "./lib/socket.js";
 
-import path from "path";
-
 dotenv.config();
 
 const PORT = process.env.PORT;
-const _dirname = path.resolve()
-//middleware for parsing json request body
+
+// Define __dirname in ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use(express.json());
 app.use(cookieParser());
-
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow requests only from this frontend
-    credentials: true, // Allow cookies (if needed)
+    origin: "http://localhost:5173",
+    credentials: true,
   })
 );
 
@@ -37,6 +39,6 @@ if (process.env.NODE_ENV === "production") {
 }
 
 server.listen(PORT, () => {
-  console.log(`server is running at ${PORT}`);
+  console.log("Server is running on PORT: " + PORT);
   connectDB();
 });
