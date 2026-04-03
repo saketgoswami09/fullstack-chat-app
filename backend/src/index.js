@@ -6,7 +6,6 @@ import cors from "cors";
 import path from "path";
 
 import { connectDB } from "./lib/db.js";
-
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import { app, server } from "./lib/socket.js";
@@ -18,13 +17,18 @@ const __dirname = path.resolve();
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
+
+
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://fullstack-chat-app-nu-lime.vercel.app",
+      "https://fullstack-chat-app-mauve.vercel.app",
+      "https://fullstack-chat-app-git-main-saketgoswami09s-projects.vercel.app",
     ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
