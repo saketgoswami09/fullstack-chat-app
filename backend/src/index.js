@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-
 import path from "path";
 
 import { connectDB } from "./lib/db.js";
@@ -12,30 +11,34 @@ import { app, server } from "./lib/socket.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (
+      !origin ||
+      origin.includes("localhost") ||
+      origin.includes("vercel.app")
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // handles preflight
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
-
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://fullstack-chat-app-mauve.vercel.app",
-      "https://fullstack-chat-app-git-main-saketgoswami09s-projects.vercel.app",
-    ],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
-
-
 
 server.listen(PORT, () => {
   console.log("server is running on PORT:" + PORT);
